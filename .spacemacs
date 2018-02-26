@@ -55,6 +55,15 @@ values."
              colors-enable-nyan-cat-progress-bar t
              colors-colorize-identifiers 'all)
 
+     gtags
+     (gtags :variables
+            gtags-enable-by-default t)
+
+     c-c++
+     (c-c++ :variables
+            c-c++-default-mode-for-headers 'c++-mode
+            c-c++-enable-clang-support t)
+
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -307,6 +316,24 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  ;; Bind clang-format-region to C-M-Tab in all modes
+  (global-key-binding [C-M-tab] 'clang-format-region)
+  ;; Bind clang-format-buffer to tab in c++-mode only
+  (add-hook 'c++-mode-hook 'clang-format-bindings)
+  (defun clang-format-bindings ()
+    (define-key c++-mode-map [C-tab] 'clang-format-buffer))
+
+  ;; Helm-mode hooks
+  (add-hook 'c++-mode-hook 'helm-mode)
+  (add-hook 'c-mode-hook 'helm-mode)
+
+  ;; Helm-gtags-mode-hooks
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+
+  ;; Line numbers in c-c++ mode
+  (add-hook 'c++-mode-hooks 'linum-mode)
+  (add-hook 'c-mode-hooks 'linum-mode)
   )
 
 (defun dotspacemacs/user-config ()
